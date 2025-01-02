@@ -40,18 +40,18 @@ pipeline {
         stage('Run Application') {
             steps {
                 // Run your application in a Docker container
-                sh 'docker run -d -p 8000:8000 --name delivery_metrics delivery_metrics'
+                sh 'docker run -d -p 8005:8005 --name delivery_metrics delivery_metrics'
             }
         }
         stage('Run Prometheus & Grafana') {
             steps {
                 // Run Prometheus with the configuration files from the repository
                 sh '''
-                docker run -d --name prometheus -p 9090:9090 \
+                docker run -d --name prometheus -p 9095:9095 \
                   -v $WORKSPACE/prometheus.yml:/etc/prometheus/prometheus.yml \
                   -v $WORKSPACE/alert_rules.yml:/etc/prometheus/alert_rules.yml \
                   prom/prometheus
-                docker run -d --name grafana -p 3000:3000 grafana/grafana
+                docker run -d --name grafana -p 3005:3005 grafana/grafana
                 '''
             }
         }
