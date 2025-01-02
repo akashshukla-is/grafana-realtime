@@ -24,34 +24,28 @@ pipeline {
                 }
             }
         }
-        stage('Setup Workspace') {
+        stage('Checkout Repository') {
             steps {
-                script {
-                    // Define the local source path where the files are located
-                    def localSourcePath = '/path/to/your/local/files' // Replace with your actual path
-                    def workspacePath = env.WORKSPACE
-
-                    // Copy necessary files into the Jenkins workspace
-                    sh """
-                    cp ${localSourcePath}/delivery_metrics.py ${workspacePath}/
-                    cp ${localSourcePath}/prometheus.yml ${workspacePath}/
-                    cp ${localSourcePath}/alert_rules.yml ${workspacePath}/
-                    """
-                }
+                // Jenkins will automatically clone the repository with the Git SCM plugin
+                // The repository is available under the $WORKSPACE directory
+                echo "Repository checked out to: ${env.WORKSPACE}"
             }
         }
         stage('Build Docker Image') {
             steps {
+                // Assuming you have a Dockerfile in your repository
                 sh 'docker build -t delivery_metrics .'
             }
         }
         stage('Run Application') {
             steps {
+                // Run your application in a Docker container
                 sh 'docker run -d -p 8000:8000 --name delivery_metrics delivery_metrics'
             }
         }
         stage('Run Prometheus & Grafana') {
             steps {
+                // Run Prometheus with the configuration files from the repository
                 sh '''
                 docker run -d --name prometheus -p 9090:9090 \
                   -v $WORKSPACE/prometheus.yml:/etc/prometheus/prometheus.yml \
@@ -63,3 +57,4 @@ pipeline {
         }
     }
 }
+
