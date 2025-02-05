@@ -12,7 +12,7 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port that your application will run on
-EXPOSE 8000
+EXPOSE 8005
 
 # Command to run your Python application
 CMD ["python", "delivery_metrics.py"]
